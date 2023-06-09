@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class PlayerFallingState : PlayerBaseState, IRootState
 {
     public PlayerFallingState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
@@ -14,6 +13,7 @@ public class PlayerFallingState : PlayerBaseState, IRootState
     }
     public override void UpdateState()
     {
+
         HandleGravity();
         Ctx.CoyoteTimer += Time.deltaTime; //for CoyoteTime
         if(Ctx.JumpBufferTimer >= 0) Ctx.JumpBufferTimer -= Time.deltaTime; //for jumpBuffer
@@ -27,22 +27,22 @@ public class PlayerFallingState : PlayerBaseState, IRootState
     }
     public override void InitializeSubstate()
     {
-        if (!Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        if (Ctx.HasJustWallJumped)
         {
-            SetSubState(Factory.Idle());
+            SetSubState(Factory.WallJump());
         }
-        else if (Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        else if (Ctx.IsLateralMovementPressed)
         {
             SetSubState(Factory.Walking());
         }
         else
         {
-            SetSubState(Factory.Running());
+            SetSubState(Factory.Idle());
         }
     }
     public override void CheckSwitchStates()
     {
-        if (Ctx.IsGrounded)
+        if (Ctx.IsGrounded && !Ctx.WallPenetrationBug)
         {
             SwitchState(Factory.Grounded());
         }
@@ -50,8 +50,11 @@ public class PlayerFallingState : PlayerBaseState, IRootState
         {
             SwitchState(Factory.Jumping());
         }
+        if ((Ctx.WallOnLeft && Ctx.MonitorLeftInput) || (Ctx.WallOnRight && Ctx.MonitorRightInput))
+        {
+            SwitchState(Factory.OnWall());
+        }
     }
-
     public void HandleGravity()
     {
         float previousYVelocity = Ctx.VerticalMovementCalculated;

@@ -23,10 +23,7 @@ public class PlayerRunningState : PlayerBaseState
         {
             SwitchState(Factory.Idle());
         }
-        else if (Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
-        {
-            SwitchState(Factory.Walking());
-        }
+
     }
 }
 

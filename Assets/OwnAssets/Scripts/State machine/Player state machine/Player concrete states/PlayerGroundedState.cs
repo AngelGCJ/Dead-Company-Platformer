@@ -1,6 +1,3 @@
-using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
-
 public class PlayerGroundedState : PlayerBaseState, IRootState
 {
     public PlayerGroundedState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
@@ -11,26 +8,36 @@ public class PlayerGroundedState : PlayerBaseState, IRootState
     public override void EnterState()
     {
         InitializeSubstate();
+        //Set acceleration and deacceleration values on ground
+        Ctx.AccelerationTime = Ctx.AccGround;
+        Ctx.DeAccelerationTimeTurning = Ctx.DeAccGroundTurning;
+        Ctx.DeAccelerationTimeReleaseInput = Ctx.DeAccGround;
+        //
+        Ctx.HasJustWallJumped = false;
         HandleGravity();
+        Ctx.SnapToWall();
     }
     public override void UpdateState()
     {
+
+
+
         CheckSwitchStates();
     }
     public override void ExitState() { }
     public override void InitializeSubstate()
     {
-        if (!Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        if (Ctx.HasJustWallJumped)
         {
-            SetSubState(Factory.Idle());
+            SetSubState(Factory.WallJump());
         }
-        else if (Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        else if (Ctx.IsLateralMovementPressed)
         {
             SetSubState(Factory.Walking());
         }
         else
         {
-            SetSubState(Factory.Running());
+            SetSubState(Factory.Idle());
         }
     }
     public override void CheckSwitchStates()
@@ -53,6 +60,16 @@ public class PlayerGroundedState : PlayerBaseState, IRootState
     public void HandleGravity()
     {
         Ctx.VerticalMovementCalculated = 0;
-        Ctx.SnapFeet();
+
+        //ALL THIS TO TRY TO REMOVE THE BUG:
+        Ctx.SnapToWall();
+        if (Ctx.IsGrounded)
+        {
+            if (!Ctx.WallPenetrationBug) Ctx.SnapFeet();
+        }
+
     }
+
+
+
 }

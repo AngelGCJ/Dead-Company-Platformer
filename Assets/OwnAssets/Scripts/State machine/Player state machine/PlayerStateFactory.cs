@@ -4,10 +4,11 @@ enum PlayerStates
 {
     idle,
     walking,
-    running,
+    wallJump,
     grounded,
     jumping,
-    falling
+    falling,
+    onWall
 }
 public class PlayerStateFactory
 {
@@ -18,10 +19,11 @@ public class PlayerStateFactory
         _context = currentContext;
         _states[PlayerStates.idle] = new PlayerIdleState(_context, this);
         _states[PlayerStates.walking] = new PlayerWalkingState(_context, this);
-        _states[PlayerStates.running] = new PlayerRunningState(_context, this);
+        _states[PlayerStates.wallJump] = new PlayerWallJumpState(_context, this);
         _states[PlayerStates.grounded] = new PlayerGroundedState(_context, this);
         _states[PlayerStates.jumping] = new PlayerJumpingState(_context, this);
         _states[PlayerStates.falling] = new PlayerFallingState(_context, this);
+        _states[PlayerStates.onWall] = new PlayerOnWallState(_context, this);
     }
     public PlayerBaseState Idle()
     {
@@ -31,9 +33,9 @@ public class PlayerStateFactory
     {
         return _states[PlayerStates.walking];
     }
-    public PlayerBaseState Running()
+    public PlayerBaseState WallJump()
     {
-        return _states[PlayerStates.running];
+        return _states[PlayerStates.wallJump];
     }
     public PlayerBaseState Jumping()
     {
@@ -46,5 +48,9 @@ public class PlayerStateFactory
     public PlayerBaseState Falling()
     {
         return _states[PlayerStates.falling];
+    }
+    public PlayerBaseState OnWall()
+    {
+        return _states[PlayerStates.onWall];
     }
 }

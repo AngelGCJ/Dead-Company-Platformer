@@ -27,7 +27,7 @@ public abstract class PlayerBaseState
     {
         UpdateState();
 
-        if(_currentSubState != null)
+        if (_currentSubState != null)
         {
             _currentSubState.UpdateStates();
         }
@@ -37,7 +37,7 @@ public abstract class PlayerBaseState
     {
         ExitState();
         newState.EnterState();
-        if(_isRootState)
+        if (_isRootState)
         {
             _ctx.CurrentState = newState;
         }
@@ -57,5 +57,7 @@ public abstract class PlayerBaseState
     }
 
     /*===|===|===|===|===|===|===|===|===[ CUSTOM FUNCTIONS ]===|===|===|===|===|===|===|===|===*/
+
+
 
 }

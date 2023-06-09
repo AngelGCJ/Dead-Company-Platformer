@@ -53,6 +53,33 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Monitoring Move Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""9075cc42-b48f-43f0-aa0a-f83b23d5e438"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Monitoring Move Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""72fee1d3-afe2-4bb5-9459-36f68cebb7a6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""9bff2321-6306-4b3a-a863-6fe8a80931b2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -143,6 +170,61 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0142446-14b3-4472-8438-90499b93406a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Monitoring Move Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e083e24-0f98-4ff3-bff3-056cd08e85e2"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Monitoring Move Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""649fd95b-bbf4-424b-8f7e-ca9ae6809dd2"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Monitoring Move Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""784a8619-3256-4469-9dd1-0356d8f774a0"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Monitoring Move Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""22fefce5-ce3b-43e7-9fcd-3e41aa2e6447"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -154,6 +236,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerMovement_Move = m_PlayerMovement.FindAction("Move", throwIfNotFound: true);
         m_PlayerMovement_Run = m_PlayerMovement.FindAction("Run", throwIfNotFound: true);
         m_PlayerMovement_Jump = m_PlayerMovement.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerMovement_MonitoringMoveLeft = m_PlayerMovement.FindAction("Monitoring Move Left", throwIfNotFound: true);
+        m_PlayerMovement_MonitoringMoveRight = m_PlayerMovement.FindAction("Monitoring Move Right", throwIfNotFound: true);
+        m_PlayerMovement_Shoot = m_PlayerMovement.FindAction("Shoot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -218,6 +303,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerMovement_Move;
     private readonly InputAction m_PlayerMovement_Run;
     private readonly InputAction m_PlayerMovement_Jump;
+    private readonly InputAction m_PlayerMovement_MonitoringMoveLeft;
+    private readonly InputAction m_PlayerMovement_MonitoringMoveRight;
+    private readonly InputAction m_PlayerMovement_Shoot;
     public struct PlayerMovementActions
     {
         private @PlayerInput m_Wrapper;
@@ -225,6 +313,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_PlayerMovement_Move;
         public InputAction @Run => m_Wrapper.m_PlayerMovement_Run;
         public InputAction @Jump => m_Wrapper.m_PlayerMovement_Jump;
+        public InputAction @MonitoringMoveLeft => m_Wrapper.m_PlayerMovement_MonitoringMoveLeft;
+        public InputAction @MonitoringMoveRight => m_Wrapper.m_PlayerMovement_MonitoringMoveRight;
+        public InputAction @Shoot => m_Wrapper.m_PlayerMovement_Shoot;
         public InputActionMap Get() { return m_Wrapper.m_PlayerMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -243,6 +334,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @MonitoringMoveLeft.started += instance.OnMonitoringMoveLeft;
+            @MonitoringMoveLeft.performed += instance.OnMonitoringMoveLeft;
+            @MonitoringMoveLeft.canceled += instance.OnMonitoringMoveLeft;
+            @MonitoringMoveRight.started += instance.OnMonitoringMoveRight;
+            @MonitoringMoveRight.performed += instance.OnMonitoringMoveRight;
+            @MonitoringMoveRight.canceled += instance.OnMonitoringMoveRight;
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
         }
 
         private void UnregisterCallbacks(IPlayerMovementActions instance)
@@ -256,6 +356,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @MonitoringMoveLeft.started -= instance.OnMonitoringMoveLeft;
+            @MonitoringMoveLeft.performed -= instance.OnMonitoringMoveLeft;
+            @MonitoringMoveLeft.canceled -= instance.OnMonitoringMoveLeft;
+            @MonitoringMoveRight.started -= instance.OnMonitoringMoveRight;
+            @MonitoringMoveRight.performed -= instance.OnMonitoringMoveRight;
+            @MonitoringMoveRight.canceled -= instance.OnMonitoringMoveRight;
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
         }
 
         public void RemoveCallbacks(IPlayerMovementActions instance)
@@ -278,5 +387,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnMonitoringMoveLeft(InputAction.CallbackContext context);
+        void OnMonitoringMoveRight(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
     }
 }

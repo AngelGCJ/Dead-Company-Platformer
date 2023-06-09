@@ -10,16 +10,22 @@ public class PlayerJumpingState : PlayerBaseState, IRootState
     }
     public override void EnterState()
     {
-        Ctx.CoyoteTimer = Ctx.CoyoteTime + 1;
         InitializeSubstate();
+        //Set acceleration and deacceleration values in jump
+        //also in falling?
+        Ctx.AccelerationTime = Ctx.AccAir;
+        Ctx.DeAccelerationTimeTurning = Ctx.DeAccAirTurning;
+        Ctx.DeAccelerationTimeReleaseInput = Ctx.DeAccAir;
+        //
+        Ctx.CoyoteTimer = Ctx.CoyoteTime + 1; //would never be able to use coyote time if has jumped
         Ctx.Animator.SetBool(Ctx.IsJumpingHash, true);
+        if (Ctx.HasJustWallJumped) HandleWallJump();
         HandleJump();
     }
     public override void UpdateState()
     {
-
         HandleGravity();
-        //###############3
+        //
         CheckSwitchStates();
     }
     public override void ExitState()
@@ -28,24 +34,29 @@ public class PlayerJumpingState : PlayerBaseState, IRootState
     }
     public override void InitializeSubstate()
     {
-        if (!Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        if (Ctx.HasJustWallJumped)
         {
-            SetSubState(Factory.Idle());
+            SetSubState(Factory.WallJump());
         }
-        else if (Ctx.IsLateralMovementPressed && !Ctx.IsRunPressed)
+        else if (Ctx.IsLateralMovementPressed)
         {
             SetSubState(Factory.Walking());
         }
         else
         {
-            SetSubState(Factory.Running());
+            SetSubState(Factory.Idle());
         }
     }
     public override void CheckSwitchStates()
     {
-        if(!Ctx.IsJumpPressed || Ctx.VerticalMovementCalculated < 0.0f)
+        if(!Ctx.IsJumpPressed || Ctx.VerticalMovementCalculated < Ctx.JumpToFallEarly) //zero?
         {
             SwitchState(Factory.Falling());
+        }
+        if ((Ctx.WallOnLeft && Ctx.MonitorLeftInput) || (Ctx.WallOnRight && Ctx.MonitorRightInput) ||
+            Ctx.HasJustWallJumped && (Ctx.WallOnRight || Ctx.WallOnLeft))
+        {
+            SwitchState(Factory.OnWall());
         }
     }
 
@@ -53,6 +64,11 @@ public class PlayerJumpingState : PlayerBaseState, IRootState
     {
         Ctx.VerticalMovementCalculated = Ctx.InitialJumpVelocity;
         //Ctx.AppliedMovementVector_y = Ctx.InitialJumpVelocity;
+    }
+
+    void HandleWallJump()
+    {
+        Ctx.LateralMovementModified += Ctx.WalkSpeed * Ctx.LateralMovementInput * -1 * Time.deltaTime;
     }
 
     public void HandleGravity()
